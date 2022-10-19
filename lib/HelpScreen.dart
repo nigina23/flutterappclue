@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutterappclue/models/catalog.dart';
+import 'package:flutterappclue/widgets/itemWidget.dart';
+
 
 class HelpScreen extends StatefulWidget {
   const HelpScreen({Key? key}) : super(key: key);
@@ -10,25 +13,17 @@ class HelpScreen extends StatefulWidget {
 class _HelpScreenState extends State<HelpScreen> {
   @override
   Widget build(BuildContext context) {
-    return ListView(
-      padding: const EdgeInsets.all(8),
-      children: <Widget>[
-        Container(
-          height: 50,
-          color: Colors.amber[600],
-          child: const Center(child: Text('Entry A')),
-        ),
-        Container(
-          height: 50,
-          color: Colors.amber[500],
-          child: const Center(child: Text('Entry B')),
-        ),
-        Container(
-          height: 50,
-          color: Colors.amber[100],
-          child: const Center(child: Text('Entry C')),
-        ),
-      ],
+    return Scaffold(
+      backgroundColor: Colors.grey.shade200,
+      appBar: AppBar(
+        title: Text("Hilfe"),
+      ),
+      body:ListView.builder(
+        itemCount: CatalogModel.items.length,
+        itemBuilder: (context,index){
+          return ItemWidget(item: CatalogModel.items[index]);
+        },
+      ),
     );
   }
 }
