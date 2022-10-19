@@ -2,6 +2,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
 
+import 'HelpScreen.dart';
+
 class Calendar extends StatefulWidget {
   const Calendar({Key? key}) : super(key: key);
 
@@ -16,6 +18,11 @@ class _CalendarState extends State<Calendar> {
     return Scaffold(
       appBar: AppBar(
         title:  Text('Heute'),
+        actions:<Widget> [
+          IconButton(
+          onPressed:_hilfeListeAnzeigen,
+          icon: Icon(Icons.question_mark_rounded),)
+        ],
       ),
       body: SfCalendar(
         view: CalendarView.month,
@@ -36,5 +43,8 @@ class _CalendarState extends State<Calendar> {
         cellBorderColor: Colors.grey,
       ),
     );
+  }
+  void _hilfeListeAnzeigen(){
+    print("butten würde geklickt");
   }
 }
