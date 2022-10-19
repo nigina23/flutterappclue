@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutterappclue/HelpScreen.dart';
 import 'package:flutterappclue/signInButton.dart';
 import 'package:firebase_core/firebase_core.dart';
 
@@ -14,6 +15,8 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+        routes:{
+        '/Help': (context) => HelpScreen(),},
       title: _title,
       debugShowCheckedModeBanner: false,
       theme: ThemeData(

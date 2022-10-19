@@ -20,7 +20,7 @@ class _CalendarState extends State<Calendar> {
         title:  Text('Heute'),
         actions:<Widget> [
           IconButton(
-          onPressed:_hilfeListeAnzeigen,
+          onPressed:() => Navigator.pushNamed(context, '/Help'),
           icon: Icon(Icons.question_mark_rounded),)
         ],
       ),
