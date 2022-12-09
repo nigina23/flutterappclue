@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'forgot_pw_screen.dart';
 import 'main.dart';
 import 'track_screen.dart';
 
@@ -127,6 +128,28 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                 ),
                 SizedBox(height: 25,),
+                //forgot password
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 25.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      GestureDetector(
+                        onTap:(){
+                          Navigator.push(context, MaterialPageRoute(builder: (context){
+                            return ForgotPasswordScreen();
+                          }));
+                        },
+                        child: Text("password vergessen?",
+                              style: TextStyle(
+                              color: Colors.grey[200],
+                              fontWeight: FontWeight.bold),),
+                      ),
+                    ],
+                  ),
+                ),
+
+                SizedBox(height: 25,),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -137,7 +160,8 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),),
                     GestureDetector(
                       onTap:widget.showRegisterPage ,
-                      child: Text("Register now",style: TextStyle(
+                      child: Text("Register now",
+                          style: TextStyle(
                           color: Colors.grey[200],
                           fontWeight: FontWeight.bold),
                       ),
