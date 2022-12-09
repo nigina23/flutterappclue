@@ -1,37 +1,45 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'main.dart';
-import 'track_screen.dart';
 
-class LoginScreen extends StatefulWidget {
-  final VoidCallback showRegisterPage;
-  const LoginScreen({Key? key, required this.showRegisterPage}) : super(key: key);
+class RegisterScreen extends StatefulWidget {
+  final VoidCallback showLoginPage;
+  const RegisterScreen({Key? key, required this.showLoginPage}) : super(key: key);
 
   @override
-  State<LoginScreen> createState() => _LoginScreenState();
+  State<RegisterScreen> createState() => _RegisterScreenState();
 }
 
-class _LoginScreenState extends State<LoginScreen> {
+class _RegisterScreenState extends State<RegisterScreen> {
 
   //text controller
   final _emailController=TextEditingController();
   final _passwordController=TextEditingController();
-  Future signIn() async{
-    await FirebaseAuth.instance.signInWithEmailAndPassword(
-        email: _emailController.text.trim(),
-        password: _passwordController.text.trim(),
-    );
+  final _confirmPasswordController = TextEditingController();
 
-  }
   @override
   void dispose() {
     // TODO: implement dispose
     _emailController.dispose();
     _passwordController.dispose();
+    _confirmPasswordController.dispose();
     super.dispose();
   }
 
+  Future signUp () async {
+    if (passwordConfirmed()) {
+      await FirebaseAuth.instance.createUserWithEmailAndPassword(
+          email: _emailController.text.trim(),
+          password: _passwordController.text.trim());
+    }
+  }
 
+  bool passwordConfirmed() {
+    if(_passwordController.text.trim()==_confirmPasswordController.text.trim()){
+      return true;
+    }else {
+      return false;
+    }
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -47,7 +55,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   size: 100,
                 ),
                 const SizedBox(height: 20,),
-                const Text("Hello ClueApp",
+                const Text("Registriere dich hier",
                   style: TextStyle(
                       fontWeight: FontWeight.bold,
                       color: Colors.white,
@@ -106,19 +114,43 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                 ),
                 const SizedBox(height: 20,),
-                //signing button
+                // controlle des Passwords
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 25.0),
+                  child:TextField(
+                    controller: _confirmPasswordController,
+                    decoration: InputDecoration(
+                      enabledBorder: OutlineInputBorder(
+                        borderSide: const BorderSide(color: Colors.white),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: const BorderSide(color: Colors.deepOrange),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
 
+                      border: InputBorder.none,
+                      prefixIcon: Icon(Icons.lock),
+                      labelText: 'Confirm Password',
+                      fillColor: Colors.grey[200],
+                      filled: true,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 20,),
+
+                //signing button
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 25.0),
                   child: GestureDetector(
-                    onTap: signIn,
+                    onTap: signUp,
                     child: Container(
                       padding: EdgeInsets.all(25),
                       decoration: BoxDecoration(
                           color: Color(0xFFf4a825),
                           borderRadius: BorderRadius.circular(12)),
                       child: const Center(
-                        child: Text("Sign in",
+                        child: Text("Registrieren",
                           style: TextStyle(
                             color: Colors.white,
                           ),),
@@ -130,14 +162,14 @@ class _LoginScreenState extends State<LoginScreen> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Text("Not a member? ",
+                    Text("Schon a registriert? ",
                       style: TextStyle(
                         color: Color(0xFF3A0EA8),
                         fontWeight: FontWeight.bold,
                       ),),
                     GestureDetector(
-                      onTap:widget.showRegisterPage ,
-                      child: Text("Register now",style: TextStyle(
+                      onTap:widget.showLoginPage ,
+                      child: Text("Hier einloggen",style: TextStyle(
                           color: Colors.grey[200],
                           fontWeight: FontWeight.bold),
                       ),

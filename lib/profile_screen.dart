@@ -31,6 +31,7 @@ class _AdminPageState extends State<AdminPage> {
       });
     } on PlatformException catch (e) {
       print(e);
+      //TODO Snackbar als Error
     }
   }
   Future<File> saveImagePermanently(String imagePath) async{
