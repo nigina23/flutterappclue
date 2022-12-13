@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_signin_button/flutter_signin_button.dart';
 import 'forgot_pw_screen.dart';
 import 'main.dart';
@@ -21,7 +22,7 @@ class _LoginScreenState extends State<LoginScreen> {
   final _passwordController = TextEditingController();
 
   bool _isVisible = false;
-
+// log in mit fehlerbehandlung
   Future signIn() async {
     try {
       await FirebaseAuth.instance.signInWithEmailAndPassword(
@@ -36,6 +37,12 @@ class _LoginScreenState extends State<LoginScreen> {
         print('Wrong password provided for that user.');
       }
       return Future(() => null);
+    } on PlatformException catch (e) {
+      print("Platform Exception thrown on Sign Up page");
+      print(e.message);
+    } catch (e) {
+      print("Exception thrown on Sign Up page");
+      print(e);
     }
   }
 
@@ -157,8 +164,8 @@ class _LoginScreenState extends State<LoginScreen> {
                         onTap: () {
                           Navigator.push(context,
                               MaterialPageRoute(builder: (context) {
-                                return ForgotPasswordScreen();
-                              }));
+                            return ForgotPasswordScreen();
+                          }));
                         },
                         child: Text(
                           "password vergessen?",
@@ -207,7 +214,6 @@ class _LoginScreenState extends State<LoginScreen> {
                     },
                   ),
                 ),
-
 
                 SizedBox(
                   height: 25,

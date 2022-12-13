@@ -1,3 +1,6 @@
+import 'dart:io';
+
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutterappclue/HelpScreen.dart';
 import 'package:flutterappclue/signInButton.dart';
@@ -6,6 +9,11 @@ import 'package:firebase_core/firebase_core.dart';
 void main () async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
+
+  FlutterError.onError = (details) {
+    FlutterError.presentError(details);
+    if (kReleaseMode) exit(1);
+  };
   runApp(const MyApp());
 }
 

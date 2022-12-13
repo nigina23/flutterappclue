@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 class RegisterScreen extends StatefulWidget {
   final VoidCallback showLoginPage;
@@ -34,19 +35,38 @@ class _RegisterScreenState extends State<RegisterScreen> {
   }
 
   Future signUp() async {
-    if (passwordConfirmed()) {
-      //create user
-      await FirebaseAuth.instance.createUserWithEmailAndPassword(
-          email: _emailController.text.trim(),
-          password: _passwordController.text.trim());
-      //add user details
-      addUserDetails(
-          _firstNameController.text.trim(),
-          _lastNameController.text.trim(),
-          _emailController.text.trim(),
-          int.parse(
-            _ageController.text.trim(),
-          ));
+    try {
+      if (passwordConfirmed()) {
+        //create user
+        await FirebaseAuth.instance.createUserWithEmailAndPassword(
+            email: _emailController.text.trim(),
+            password: _passwordController.text.trim());
+        //add user details
+        addUserDetails(
+            _firstNameController.text.trim(),
+            _lastNameController.text.trim(),
+            _emailController.text.trim(),
+            int.parse(
+              _ageController.text.trim(),
+            ));
+      }
+    } on FirebaseAuthException catch (e) {
+      // TODO
+      if (e.code == 'weak-password') {
+        print('The password provided is too weak.');
+        SnackBar(content: Text(e.message.toString()),);// TODo warum funktioniert Snackbar hier nicht?
+      } else if (e.code == 'email-already-in-use') {
+        print('An account already exists for that email address you are trying to sign up.');
+      }
+    } on FirebaseException catch (e) {
+      print("Firebase Exception thrown on Sign Up page");
+      print(e.message);
+    } on PlatformException catch (e) {
+      print("Platform Exception thrown on Sign Up page");
+      print(e.message);
+    } catch (e) {
+      print("Exception thrown on Sign Up page");
+      print(e);
     }
   }
 
