@@ -9,11 +9,11 @@ import 'package:firebase_core/firebase_core.dart';
 void main () async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
-
   FlutterError.onError = (details) {
     FlutterError.presentError(details);
     if (kReleaseMode) exit(1);
   };
+
   runApp(const MyApp());
 }
 

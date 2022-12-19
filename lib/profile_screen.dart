@@ -1,11 +1,11 @@
 import 'dart:io';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:path/path.dart';
-import 'package:path_provider/path_provider.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 
 class AdminPage extends StatefulWidget {
   const AdminPage({Key? key}) : super(key: key);
@@ -17,29 +17,72 @@ class AdminPage extends StatefulWidget {
 class _AdminPageState extends State<AdminPage> {
   final user = FirebaseAuth.instance.currentUser!;
   File? image;
+  String imageUrl = "";
+  String urlString = "";
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    getUrl();
+  }
 
   Future pickImage(ImageSource source) async {
+    //try {
+    XFile? image = await ImagePicker().pickImage(source: source); //bild picken
+    print(image!.path);
+    if (image == null) return;
+    String uniqueFileName = DateTime
+        .now()
+        .microsecondsSinceEpoch
+        .toString(); //bildname nach datum speichern
+    Reference referenceRoot = FirebaseStorage.instance.ref();
+    print(referenceRoot.toString());
+    Reference referenceDirImages = await referenceRoot.child('image');
+    Reference referenceImageToUpload = await referenceDirImages.child(
+        uniqueFileName);
     try {
-      final image = await ImagePicker().pickImage(source: source);
-      if (image == null) return;
-      final imagePermanent = await saveImagePermanently(image.path);
-      setState(() {
-        this.image = imagePermanent;
+      await referenceImageToUpload.putFile(File(image!.path));
+      setState(() async {
+        imageUrl = await referenceImageToUpload.getDownloadURL();
+        print('hier ist die imageurl$imageUrl');
+
+        final usersRef = FirebaseFirestore.instance.collection("users").doc(
+            FirebaseAuth.instance.currentUser!.email);
+        final profilePicUml = {"profilePicUrl": imageUrl};
+        await usersRef.set(profilePicUml, SetOptions(merge: true));
+        setState(() {
+          urlString = imageUrl;
+        });
       });
+      //addUserImage(imageUrl.trim());
     } on PlatformException catch (e) {
-      print(e);
-      //TODO Snackbar als Error
-      SnackBar(content: Text(e.message.toString()),);
-    }
+      // TODO
+      print(e.message);
+    };
   }
 
-  Future<File> saveImagePermanently(String imagePath) async {
-    final directory = await getApplicationDocumentsDirectory();
-    final name = basename(imagePath);
-    final image = File('${directory.path}/$name');
-    return File(imagePath).copy(image.path);
-  }
+  Future addUserImage(String imageUrl) async {
+    await FirebaseFirestore.instance.collection('userImage').add({
+      'userImageUrl': imageUrl,
 
+    });
+  }
+  Future getUrl() async{
+     await FirebaseFirestore.instance.collection('users').doc(
+        FirebaseAuth.instance.currentUser!.email).get().then(
+      (DocumentSnapshot doc) {
+        final data = doc.data() as Map<String, dynamic>;
+        setState(() {
+          urlString = data['profilePicUrl'];
+        });
+
+      },
+      onError: (e) => print("Error getting document: $e"),
+    );
+
+    print("passiert hier was");
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -48,23 +91,19 @@ class _AdminPageState extends State<AdminPage> {
       ),
       body: Center(
         child: Column(
-          children: [
-            image != null
-                ? ClipOval(
-                    child: Image.file(
-                    image!,
-                    width: 160,
-                    height: 160,
-                    fit: BoxFit.cover,
-                  ))
-                : const FlutterLogo(size: 160),
+          children: [urlString.isNotEmpty?
+                  ClipOval(
+                      child: Image.network(urlString,
+                        width: 160,
+                        height: 160,
+                        fit: BoxFit.cover,
+                      )):FlutterLogo(size: 160,)
+
+             ,
             MaterialButton(
-              onPressed: () {
-                FirebaseAuth.instance.signOut();
-              },
+              onPressed: () {FirebaseAuth.instance.signOut();},
               color: Colors.deepPurple,
-              child: Text('Abmelden'),
-            ),
+              child: Text('Abmelden'),),
             buildButton(
                 title: "Pick Gallery",
                 icon: Icons.image_outlined,
@@ -72,12 +111,9 @@ class _AdminPageState extends State<AdminPage> {
             const SizedBox(height: 24),
             buildButton(
                 title: "Take a Picture",
-                icon: Icons.camera_alt_outlined,
-                onClicked: () => pickImage(ImageSource.camera))
-          ],
-        ),
-      ),
-    );
+                icon:Icons.camera_alt_outlined,
+                onClicked:() => pickImage(ImageSource.camera)
+            )],),),);
   }
 
   Widget buildButton({

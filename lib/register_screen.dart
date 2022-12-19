@@ -72,7 +72,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   Future addUserDetails(
       String firstName, String lastName, String email, int age) async {
-    await FirebaseFirestore.instance.collection('users').add({
+    await FirebaseFirestore.instance.collection('users').doc(_emailController.text.trim()).set({
       'first name': firstName,
       'last name': lastName,
       'email': email,
