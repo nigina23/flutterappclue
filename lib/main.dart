@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutterappclue/HelpScreen.dart';
 import 'package:flutterappclue/signInButton.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_app_check/firebase_app_check.dart';
 
 void main () async {
   WidgetsFlutterBinding.ensureInitialized();
