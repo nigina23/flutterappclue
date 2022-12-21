@@ -92,7 +92,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xFF9C25F4),
+      backgroundColor: Color(0xFFB0C4DE),
       body: SafeArea(
         child: Center(
           child: SingleChildScrollView(
@@ -268,7 +268,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     child: Container(
                       padding: EdgeInsets.all(25),
                       decoration: BoxDecoration(
-                          color: Color(0xFFf4a825),
+                          color: Color(0xFF4169E1),
                           borderRadius: BorderRadius.circular(12)),
                       child: const Center(
                         child: Text(
@@ -290,7 +290,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     Text(
                       "Schon a registriert? ",
                       style: TextStyle(
-                        color: Color(0xFF3A0EA8),
+                        color: Color(0xFF6495ED),
                         fontWeight: FontWeight.bold,
                       ),
                     ),

@@ -22,21 +22,17 @@ class _AdminPageState extends State<AdminPage> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     getUrl();
   }
 
   Future pickImage(ImageSource source) async {
-    //try {
     XFile? image = await ImagePicker().pickImage(source: source); //bild picken
-    print(image!.path);
     if (image == null) return;
     String uniqueFileName = DateTime.now()
         .microsecondsSinceEpoch
         .toString(); //bildname nach datum speichern
     Reference referenceRoot = FirebaseStorage.instance.ref();
-    print(referenceRoot.toString());
     Reference referenceDirImages = await referenceRoot.child('image');
     Reference referenceImageToUpload =
         await referenceDirImages.child(uniqueFileName);
@@ -44,8 +40,6 @@ class _AdminPageState extends State<AdminPage> {
       await referenceImageToUpload.putFile(File(image!.path));
       setState(() async {
         imageUrl = await referenceImageToUpload.getDownloadURL();
-        print('hier ist die imageurl$imageUrl');
-
         final usersRef = FirebaseFirestore.instance
             .collection("users")
             .doc(FirebaseAuth.instance.currentUser!.email);
@@ -55,12 +49,8 @@ class _AdminPageState extends State<AdminPage> {
           urlString = imageUrl;
         });
       });
-      //addUserImage(imageUrl.trim());
     } on PlatformException catch (e) {
-      // TODO
-      print(e.message);
     }
-    ;
   }
 
   Future addUserImage(String imageUrl) async {
@@ -94,38 +84,52 @@ class _AdminPageState extends State<AdminPage> {
         title: const Text('Profile'),
       ),
       body: Center(
-        child: Column(
-          children: [
-            urlString.isNotEmpty
-                ? ClipOval(
-                    child: Image.network(
-                    urlString,
-                    width: 160,
-                    height: 160,
-                    fit: BoxFit.cover,
-                  ))
-                : FlutterLogo(
-                    size: 160,
-                  ),
+        child: Padding(
 
-            buildButton(
-                title: "Pick Gallery",
-                icon: Icons.image_outlined,
-                onClicked: () => pickImage(ImageSource.gallery)),
-            const SizedBox(height: 24),
-            buildButton(
-                title: "Take a Picture",
-                icon: Icons.camera_alt_outlined,
-                onClicked: () => pickImage(ImageSource.camera)),
-            const SizedBox(height: 24),
-            MaterialButton(
-              onPressed: () {
-                FirebaseAuth.instance.signOut();
-              },
-              color: Colors.deepPurple,
-              child: Text('Abmelden'),
-            ),
-          ],
+          padding: const EdgeInsets.all(8.0),
+          child: Column(
+            children: [
+              urlString.isNotEmpty
+                  ? ClipOval(
+                      child: Image.network(
+                      urlString,
+                      width: 160,
+                      height: 160,
+                      fit: BoxFit.cover,
+                      loadingBuilder: (context, child, loadingProgress){
+                      if (loadingProgress == null){
+                        return child;
+                      }else{
+                        return const Center(
+                          child: CircularProgressIndicator(),
+                        );
+                      }
+                    },))
+                  : const FlutterLogo(
+                      size: 160,
+                    ),
+              const SizedBox(height: 24),
+
+              buildButton(
+                  title: "Bild aus der Galerie",
+                  icon: Icons.image_outlined,
+                  onClicked: () => pickImage(ImageSource.gallery)),
+              const SizedBox(height: 24),
+
+              buildButton(
+                  title: "Mache ein Bild",
+                  icon: Icons.camera_alt_outlined,
+                  onClicked: () => pickImage(ImageSource.camera)),
+              const SizedBox(height: 24),
+              MaterialButton(
+                onPressed: () {
+                  FirebaseAuth.instance.signOut();
+                },
+                color: Color(0xFFB0C4DE),
+                child: Text('Abmelden'),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -136,19 +140,20 @@ class _AdminPageState extends State<AdminPage> {
     required IconData icon,
     required VoidCallback onClicked,
   }) =>
-      ElevatedButton(
-          style: ElevatedButton.styleFrom(
-            minimumSize: Size.fromHeight(56),
-            primary: Colors.white,
-            onPrimary: Colors.black,
-            textStyle: TextStyle(fontSize: 20),
+      GestureDetector(
+        onTap: onClicked,
+        child: DecoratedBox(
+          decoration: BoxDecoration(borderRadius: BorderRadius.circular(40),color: Color(0xFFB0C4DE)),
+          child: Padding(
+            padding: const EdgeInsets.all(12.0),
+            child: Row(
+              children: [
+                Icon(icon, size: 28),
+                const SizedBox(width: 16),
+                Text(title),
+              ],
+            ),
           ),
-          onPressed: onClicked,
-          child: Row(
-            children: [
-              Icon(icon, size: 28),
-              const SizedBox(width: 16),
-              Text(title),
-            ],
-          ));
+        ),
+      );
 }

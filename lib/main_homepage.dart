@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'kalender_screen.dart';
+import 'calender_screen.dart';
 import 'profile_screen.dart';
 import 'track_screen.dart';
 
@@ -13,7 +13,7 @@ class MainHomePage extends StatefulWidget {
 class _MainHomePageState extends State<MainHomePage> {
   int _selectedIndex = 0;
   static const List<Widget> _widgetOptions = <Widget>[
-    Calendar(),
+    CalendarScreen(),
     Track(),
     AdminPage(),
   ];

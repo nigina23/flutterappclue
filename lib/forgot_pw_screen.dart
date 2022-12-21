@@ -46,9 +46,8 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xFF9C25F4),
+      backgroundColor: Color(0xFFB0C4DE),
       appBar: AppBar(
-        backgroundColor: Colors.grey,
       ),
       body: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -81,7 +80,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                   borderRadius: BorderRadius.circular(12),
                 ),
                 focusedBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: Colors.deepOrange),
+                  borderSide: BorderSide(color: Colors.grey),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 fillColor: Colors.grey[200],
@@ -95,10 +94,25 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
           SizedBox(
             height: 20,
           ),
-          MaterialButton(
-            onPressed: passwordReset,
-            child: Text("Passwort zurücksetzen"),
-            color: Color(0xFFf4a825),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 25.0),
+            child: GestureDetector(
+              onTap: passwordReset,
+              child: Container(
+                padding: EdgeInsets.all(25),
+                decoration: BoxDecoration(
+                    color: Color(0xFF4169E1),
+                    borderRadius: BorderRadius.circular(12)),
+                child: const Center(
+                  child: Text(
+                    "Resetten",
+                    style: TextStyle(
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+              ),
+            ),
           ),
         ],
       ),

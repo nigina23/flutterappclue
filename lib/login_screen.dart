@@ -3,8 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_signin_button/flutter_signin_button.dart';
 import 'forgot_pw_screen.dart';
-import 'main.dart';
-import 'track_screen.dart';
+import 'package:email_validator/email_validator.dart';
 
 class LoginScreen extends StatefulWidget {
   final VoidCallback showRegisterPage;
@@ -20,6 +19,7 @@ class _LoginScreenState extends State<LoginScreen> {
   //text controller
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
+  final formKey = GlobalKey<FormState> ();
 
   bool _isVisible = false;
 // log in mit fehlerbehandlung
@@ -57,7 +57,7 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xFF9C25F4),
+      backgroundColor: Color(0xFFB0C4DE),
       body: SafeArea(
         child: Center(
           child: SingleChildScrollView(
@@ -85,22 +85,27 @@ class _LoginScreenState extends State<LoginScreen> {
                 //email textfield
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 25.0),
-                  child: TextField(
-                    controller: _emailController,
-                    decoration: InputDecoration(
-                      enabledBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: Colors.white),
-                        borderRadius: BorderRadius.circular(12),
+                  child: Form(
+                    autovalidateMode: AutovalidateMode.onUserInteraction,
+                    key: formKey,
+                    child: TextFormField(
+                      controller: _emailController,
+                      validator: (email)=>email!=null && !EmailValidator.validate(email)?'Gib den Email correct ein':null,
+                      decoration: InputDecoration(
+                        enabledBorder: OutlineInputBorder(
+                          borderSide: BorderSide(color: Colors.white),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderSide: BorderSide(color: Colors.grey),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        fillColor: Colors.grey[200],
+                        filled: true,
+                        border: InputBorder.none,
+                        prefixIcon: Icon(Icons.email),
+                        labelText: 'Email',
                       ),
-                      focusedBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: Colors.deepOrange),
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      fillColor: Colors.grey[200],
-                      filled: true,
-                      border: InputBorder.none,
-                      prefixIcon: Icon(Icons.email),
-                      labelText: 'Email',
                     ),
                   ),
                 ),
@@ -112,40 +117,49 @@ class _LoginScreenState extends State<LoginScreen> {
                 //password textfield
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 25.0),
-                  child: TextField(
-                    obscureText: !_isVisible,
-                    controller: _passwordController,
-                    decoration: InputDecoration(
-                      suffixIcon: IconButton(
-                        onPressed: () {
-                          setState(() {
-                            _isVisible = !_isVisible;
-                          });
-                        },
-                        icon: _isVisible
-                            ? Icon(
-                                Icons.visibility,
-                                color: Colors.black,
-                              )
-                            : Icon(
-                                Icons.visibility_off,
-                                color: Colors.grey,
-                              ),
+                  child: Form(
+                    autovalidateMode: AutovalidateMode.onUserInteraction,
+                    child: TextFormField(
+                      obscureText: !_isVisible,
+                      controller: _passwordController,
+                      validator:(value){
+                        if(value!=null && value.length<7){
+                          return 'es müssen min 7 Zeichen sein';
+                        }else
+                          return null;
+                      } ,
+                      decoration: InputDecoration(
+                        suffixIcon: IconButton(
+                          onPressed: () {
+                            setState(() {
+                              _isVisible = !_isVisible;
+                            });
+                          },
+                          icon: _isVisible
+                              ? Icon(
+                                  Icons.visibility,
+                                  color: Colors.black,
+                                )
+                              : Icon(
+                                  Icons.visibility_off,
+                                  color: Colors.grey,
+                                ),
+                        ),
+                        //
+                        enabledBorder: OutlineInputBorder(
+                          borderSide: const BorderSide(color: Colors.white),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderSide: const BorderSide(color: Colors.grey),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        border: InputBorder.none,
+                        prefixIcon: Icon(Icons.lock),
+                        labelText: 'Password',
+                        fillColor: Colors.grey[200],
+                        filled: true,
                       ),
-                      //
-                      enabledBorder: OutlineInputBorder(
-                        borderSide: const BorderSide(color: Colors.white),
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderSide: const BorderSide(color: Colors.grey),
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      border: InputBorder.none,
-                      prefixIcon: Icon(Icons.lock),
-                      labelText: 'Password',
-                      fillColor: Colors.grey[200],
-                      filled: true,
                     ),
                   ),
                 ),
@@ -177,18 +191,26 @@ class _LoginScreenState extends State<LoginScreen> {
                     ],
                   ),
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 25,
                 ),
+
+                //signIn Button
 
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 25.0),
                   child: GestureDetector(
-                    onTap: signIn,
+                    onTap: (){
+                      final isValidForm = formKey.currentState!.validate();
+                      if(isValidForm){
+                        signIn();
+                      }
+                    },
+                    //onTap: signIn,
                     child: Container(
                       padding: EdgeInsets.all(25),
                       decoration: BoxDecoration(
-                          color: Color(0xFFf4a825),
+                          color: Color(0xFF4169E1),
                           borderRadius: BorderRadius.circular(12)),
                       child: const Center(
                         child: Text(
@@ -201,30 +223,17 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                   ),
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 25,
-                ),
-                //signin with apple
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 25.0),
-                  child: SignInButton(
-                    Buttons.Apple,
-                    onPressed: () {
-                      signIn();
-                    },
-                  ),
                 ),
 
-                SizedBox(
-                  height: 25,
-                ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
                       "Not a member? ",
                       style: TextStyle(
-                        color: Color(0xFF3A0EA8),
+                        color: Color(0xFF6495ED),
                         fontWeight: FontWeight.bold,
                       ),
                     ),

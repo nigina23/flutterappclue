@@ -1,5 +1,6 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:syncfusion_flutter_calendar/calendar.dart';
 
 class Track extends StatefulWidget {
   const Track({Key? key}) : super(key: key);
@@ -9,69 +10,90 @@ class Track extends StatefulWidget {
 }
 
 class _TrackState extends State<Track> {
+  DateTime today = new DateTime.now();
+  bool cklicked = false;
+
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        appBar: AppBar(
-          title: const Text('Heute'),
+    List<String> pictures = ["assets/blutung.png","assets/allesGut.png","assets/schöneHaut.png","assets/stimmungsSchwankung.png","assets/unterBauchSchmerzen.png","assets/regelSchmerzen.png"];
+
+    return SafeArea(
+      child: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+         children: [
+           GestureDetector(
+               child: DecoratedBox(
+                 decoration: BoxDecoration(borderRadius: BorderRadius.circular(20),color: Colors.grey[300]),
+                 child: Padding(
+                   padding: const EdgeInsets.all(8.0),
+                   child: Text("${today.day.toString()}.${today.month.toString()}.${today.year.toString()}",
+                     textAlign: TextAlign.center,
+                     style: const TextStyle(fontWeight: FontWeight.bold,fontSize: 20),),
+                 ),
+               ),
+                  onTap: () async{
+                 DateTime? date = await showDatePicker(context: context, initialDate: today, firstDate: DateTime(2020)
+                     , lastDate: DateTime.now(),
+                 locale: const Locale("de"));
+                  if(date==null) {
+                    return;
+                  } else{
+                    setState(() {
+                      today = date;
+                    });
+                  }
+
+                  },
+                ),
+
+           Text("Was ist heute passiert ?"),
+           Expanded(
+             child: Container(
+               padding: const EdgeInsets.only(
+                 top: 30
+               ),
+               decoration: const BoxDecoration(
+                 borderRadius: BorderRadius.only(topLeft: Radius.circular(50)
+                 ,topRight: Radius.circular(50)),
+               ),
+               child: GridView.builder(
+                 itemCount: pictures.length,
+                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                   crossAxisCount: 2,
+                   crossAxisSpacing: 10,
+                   mainAxisSpacing: 10,
+                 ),
+                 itemBuilder: (context, index) {
+                   return Container(
+                     alignment: Alignment.center,
+                     decoration: const BoxDecoration(
+                         color: Color(0xFFB0C4DE),
+                         shape: BoxShape.circle,
+                      ),
+                     child: IconButton(
+                       icon: Image.asset(
+                         pictures[index],
+                         width: 300,
+                         height: 300,
+                       ),
+                       iconSize: 60,
+                       onPressed: () {sentDayToFirebase();},
+                     ),
+                   );
+                 },
+               ),
+             ),
+           )
+         ],
         ),
-        body: SfCalendar(
-          view: CalendarView.day,
-          dataSource: MeetingDataSource(_getDataSource()),
-          monthViewSettings: MonthViewSettings(
-              appointmentDisplayMode: MonthAppointmentDisplayMode.appointment),
-        ));
+      ),
+    );
   }
-}
-
-List<Meeting> _getDataSource() {
-  final List<Meeting> meetings = <Meeting>[];
-  final DateTime today = DateTime.now();
-  final DateTime startTime =
-      DateTime(today.year, today.month, today.day, 9, 0, 0);
-  final DateTime endTime = startTime.add(const Duration(hours: 2));
-  meetings.add(Meeting(
-      'Conference', startTime, endTime, const Color(0xFF0F8644), false));
-  return meetings;
-}
-
-class MeetingDataSource extends CalendarDataSource {
-  MeetingDataSource(List<Meeting> source) {
-    appointments = source;
+  Future sentDayToFirebase() async{
+    await FirebaseFirestore.instance
+        .collection("users")
+        .doc(FirebaseAuth.instance.currentUser!.email).update({'selectedDates':FieldValue.arrayUnion([today])});
   }
-
-  @override
-  DateTime getStartTime(int index) {
-    return appointments![index].from;
-  }
-
-  @override
-  DateTime getEndTime(int index) {
-    return appointments![index].to;
-  }
-
-  @override
-  String getSubject(int index) {
-    return appointments![index].eventName;
-  }
-
-  @override
-  Color getColor(int index) {
-    return appointments![index].background;
-  }
-
-  @override
-  bool isAllDay(int index) {
-    return appointments![index].isAllDay;
-  }
-}
-
-class Meeting {
-  Meeting(this.eventName, this.from, this.to, this.background, this.isAllDay);
-
-  String eventName;
-  DateTime from;
-  DateTime to;
-  Color background;
-  bool isAllDay;
 }
