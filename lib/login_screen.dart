@@ -90,7 +90,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     key: formKey,
                     child: TextFormField(
                       controller: _emailController,
-                      validator: (email)=>email!=null && !EmailValidator.validate(email)?'Gib den Email correct ein':null,
+                      validator: (email)=>email!=null && !EmailValidator.validate(email)?'Gib dein Email korrekt ein':null,
                       decoration: InputDecoration(
                         enabledBorder: OutlineInputBorder(
                           borderSide: BorderSide(color: Colors.white),
@@ -157,7 +157,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                         border: InputBorder.none,
                         prefixIcon: Icon(Icons.lock),
-                        labelText: 'Password',
+                        labelText: 'Passwort',
                         fillColor: Colors.grey[200],
                         filled: true,
                       ),
@@ -183,7 +183,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           }));
                         },
                         child: Text(
-                          "password vergessen?",
+                          "passwort vergessen?",
                           style: TextStyle(
                               color: Colors.grey[200],
                               fontWeight: FontWeight.bold),

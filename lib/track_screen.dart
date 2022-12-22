@@ -36,7 +36,7 @@ class _TrackState extends State<Track> {
                   onTap: () async{
                  DateTime? date = await showDatePicker(context: context, initialDate: today, firstDate: DateTime(2020)
                      , lastDate: DateTime.now(),
-                 locale: const Locale("de"));
+                 );
                   if(date==null) {
                     return;
                   } else{
