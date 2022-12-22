@@ -1,16 +1,17 @@
-# flutterappclue
+# CycleApp
 
-A new Flutter project.
+Projekt in MOB.
 
-## Getting Started
+## Nigina und Vincent
 
-This project is a starting point for a Flutter application.
+Cycle ist eine in Flutter entwickelte Periodentracking-App.
+Diese funktioniert sowohl auf Android als auch auf IOS.
+Die Authentifizierung der Nutzer wird hier durch eine Firebase-Verknüpfung gelöst.
+Ebenfalls werden Nutzerinformationen und Kalendereinträge in der Firestore Database hinterlegt und von dieser abgefragt.
+Das gewählte Profilbild der Nutzer wird in Firebase Storage gespeichert.
 
-A few resources to get you started if this is your first Flutter project:
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+Um die App zum laufen zu bringen 
+## "run pub get" 
+## "get independence"
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.

@@ -31,13 +31,13 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      localizationsDelegates: const [
-        GlobalMaterialLocalizations.delegate
-      ],
-      supportedLocales: const [
-        Locale('en'),
-        Locale('de')
-      ],
+     // localizationsDelegates: const [
+        //GlobalMaterialLocalizations.delegate
+     // ],
+     // supportedLocales: const [
+      //  Locale('en'),
+        //Locale('de')
+     // ],
       routes: {
         '/Help': (context) => HelpScreen(),
       },

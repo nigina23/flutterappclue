@@ -126,6 +126,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         if(value!=null && value.length<7){
                           return 'es müssen min 7 Zeichen sein';
                         }else
+                          print("was ist passiert");
                           return null;
                       } ,
                       decoration: InputDecoration(
